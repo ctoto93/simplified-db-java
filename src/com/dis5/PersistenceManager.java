@@ -7,14 +7,14 @@ public class PersistenceManager {
         //TODO: read the LSN logfile
     }
 
-    private static PersistenceManager getInstance() {
+    private static synchronized PersistenceManager getInstance() {
         if (instance == null) {
             instance = new PersistenceManager();
         }
         return instance;
     }
 
-    public int beginTransaction() {
+    public synchronized int beginTransaction() {
         //TODO: generate taid
         return 1;
     }
