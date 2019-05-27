@@ -5,6 +5,12 @@ public class Page {
     private int lsnId;
     private String data;
 
+    public Page(int id, int lsnId, String data) {
+        this.id = id;
+        this.lsnId = lsnId;
+        this.data = data;
+    }
+
     public int getId() {
         return id;
     }
