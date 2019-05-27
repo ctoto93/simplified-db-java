@@ -2,12 +2,13 @@ package com.dis5;
 
 public class PersistenceManager {
     private static PersistenceManager instance;
+    private static int lastTransactionId = 0;
 
     private PersistenceManager() {
         //TODO: read the LSN logfile
     }
 
-    private static synchronized PersistenceManager getInstance() {
+    public static synchronized PersistenceManager getInstance() {
         if (instance == null) {
             instance = new PersistenceManager();
         }
@@ -15,8 +16,7 @@ public class PersistenceManager {
     }
 
     public synchronized int beginTransaction() {
-        //TODO: generate taid
-        return 1;
+        return lastTransactionId++;
     }
 
     public void commit(int trasactionId) {
