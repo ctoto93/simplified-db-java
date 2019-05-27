@@ -7,6 +7,7 @@ public class PersistenceManager {
     private static int lastTransactionId = 0;
 
     private HashMap<Integer,String> buffer = new HashMap<>();
+    private LogManager logManager = new LogManager();
 
     private PersistenceManager() {
         //TODO: read the LSN logfile
