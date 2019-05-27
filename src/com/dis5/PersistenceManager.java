@@ -1,13 +1,19 @@
 package com.dis5;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
+import java.io.*;
 import java.util.HashMap;
 
 public class PersistenceManager {
+    private static String PAGE_FOLDER_NAME = "pages";
     private static PersistenceManager instance;
     private static int lastTransactionId = 0;
 
-    private HashMap<Integer,String> buffer = new HashMap<>();
+    private HashMap<Integer,Page> buffer = new HashMap<>();
     private LogManager logManager = new LogManager();
+    private Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
     private PersistenceManager() {
         //TODO: read the LSN logfile
@@ -34,17 +40,44 @@ public class PersistenceManager {
         //TODO: write the transaction id changes to logfile
     }
 
-    public String getPageById(int id) {
-        String data = "";
-        if (!buffer.containsKey(id)) {
-            // TODO: retrieve data from disk
-
-            buffer.put(id, data);
-            return data;
+    public Page getPageById(int id) {
+        if (buffer.containsKey(id)) {
+            return buffer.get(id);
         }
 
-        data = buffer.get(id);
-        return data;
+        Page p = getPageFromPersistence(id);
+        buffer.put(id, p);
+        return p;
+    }
+
+    private void persistPage(Page p) {
+        try {
+            Writer w = new FileWriter(getStringPagePath(p.getId()));
+            gson.toJson(p, w);
+            w.flush();
+            w.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private Page getPageFromPersistence(int id) {
+        File f = new File(getStringPagePath(id));
+
+        if (f.exists()) {
+            try {
+                return gson.fromJson(new FileReader(f), Page.class);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return null;
+    }
+
+    private String getStringPagePath(int id) {
+        return String.format("%s/page_%s.json", PAGE_FOLDER_NAME, Integer.toString(id));
     }
 
 

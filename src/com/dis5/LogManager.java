@@ -4,15 +4,12 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import java.io.*;
-import java.nio.file.FileSystems;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public class LogManager {
-    public static String logFilePath = "logs.json";
+    public static String LOG_FILE_PATH = "logs.json";
 
     private Gson gson;
     private ArrayList<Log> logs = new ArrayList<>();
@@ -20,7 +17,7 @@ public class LogManager {
     public LogManager() {
         gson = new GsonBuilder().setPrettyPrinting().create();
         try {
-            File f = new File(logFilePath);
+            File f = new File(LOG_FILE_PATH);
 
             if (!f.exists()) {
                 Writer w = new FileWriter(f);
@@ -45,7 +42,7 @@ public class LogManager {
     public void appendLog(Log log) {
         logs.add(log);
         try {
-            Writer w = new FileWriter(logFilePath);
+            Writer w = new FileWriter(LOG_FILE_PATH);
             gson.toJson(logs, w);
             w.flush();
             w.close();
