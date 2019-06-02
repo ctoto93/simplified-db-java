@@ -42,7 +42,6 @@ public class PersistenceManager {
 
         for (Log log: logManager.getLogs(transactionId)) {
             Page p = getPageById(log.getPageId());
-            System.out.println(p.getData());
             persistPage(p);
             log.setRedo(false);
             logManager.updateLog(log);
@@ -100,7 +99,7 @@ public class PersistenceManager {
             }
         }
 
-        return null;
+        return new Page(id, 0, "");
     }
 
     private String getStringPagePath(int id) {
