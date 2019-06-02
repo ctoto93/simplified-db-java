@@ -18,7 +18,13 @@ public class PersistenceManager {
     private Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
     private PersistenceManager() {
-        //TODO: read the LSN logfile
+        this.logManager = new LogManager();
+        for (Log log: logManager.getRedoLogs()) {
+            Page p = getPageFromPersistence(log.getPageId());
+            if (log.getId() > p.getLsnId()) {
+                commit(log.getTransactionId());
+            }
+        }
     }
 
     public static synchronized PersistenceManager getInstance() {
@@ -32,16 +38,9 @@ public class PersistenceManager {
         return lastTransactionId++;
     }
 
-    public void commit(int trasactionId) {
+    public void commit(int transactionId) {
 
-//        if (!shouldProcessCommit()) {
-//            return;
-//        }
-
-
-
-
-        for (Log log: logManager.getLogs(trasactionId)) {
+        for (Log log: logManager.getLogs(transactionId)) {
             Page p = getPageById(log.getPageId());
             System.out.println(p.getData());
             persistPage(p);

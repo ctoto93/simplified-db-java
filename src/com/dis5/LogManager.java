@@ -53,6 +53,16 @@ public class LogManager {
         return logs.get(logs.size() - 1).getId();
     }
 
+    public List<Log> getRedoLogs() {
+        ArrayList<Log> result = new ArrayList<>();
+        for (Log log: logs) {
+            if (log.shouldRedo() == true) {
+                result.add(log);
+            }
+        }
+        return result;
+    }
+
     public void updateLog(Log updatedLog) {
 
         for (int i =0; i < logs.size(); i++) {
