@@ -34,15 +34,17 @@ public class PersistenceManager {
 
     public void commit(int trasactionId) {
 
-        if (!shouldProcessCommit()) {
-            return;
-        }
+//        if (!shouldProcessCommit()) {
+//            return;
+//        }
 
-        Log l = logManager.getLastLog(trasactionId);
-        Page p = buffer.get(l.getTransactionId());
-        persistPage(p);
+
+
 
         for (Log log: logManager.getLogs(trasactionId)) {
+            Page p = getPageById(log.getPageId());
+            System.out.println(p.getData());
+            persistPage(p);
             log.setRedo(false);
             logManager.updateLog(log);
         }
@@ -51,11 +53,14 @@ public class PersistenceManager {
 
     public void write(int transactionId, int pageId, String data) {
 
-        Log log = new Log();
+        Log log = new Log(logManager.getLastLogId() + 1);
         log.setTransactionId(transactionId);
         log.setPageId(pageId);
         log.setData(data);
         logManager.appendLog(log);
+        Page p = getPageById(pageId);
+        p.setData(data);
+        buffer.put(log.getPageId(), p);
     }
 
 

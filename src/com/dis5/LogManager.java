@@ -49,9 +49,8 @@ public class LogManager {
         return result;
     }
 
-    public Log getLastLog(int transactionId) {
-        List<Log> logs = getLogs(transactionId);
-        return logs.get(logs.size() - 1);
+    public int getLastLogId() {
+        return logs.get(logs.size() - 1).getId();
     }
 
     public void updateLog(Log updatedLog) {

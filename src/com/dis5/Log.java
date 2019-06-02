@@ -1,7 +1,6 @@
 package com.dis5;
 
 public class Log {
-    public static int logId = 0;
 
     private int id;
     private int transactionId;
@@ -9,9 +8,9 @@ public class Log {
     private String data;
     private boolean redo;
 
-    public Log() {
-        this.id = logId;
-        logId++;
+    public Log(int id) {
+        this.id = id;
+        this.redo = true;
     }
 
     public int getId() {
