@@ -38,7 +38,7 @@ public class PersistenceManager {
         return lastTransactionId++;
     }
 
-    public void commit(int transactionId) {
+    public synchronized void commit(int transactionId) {
 
         for (Log log: logManager.getLogs(transactionId)) {
             Page p = getPageById(log.getPageId());
@@ -49,7 +49,7 @@ public class PersistenceManager {
 
     }
 
-    public void write(int transactionId, int pageId, String data) {
+    public synchronized void write(int transactionId, int pageId, String data) {
 
         Log log = new Log(logManager.getLastLogId() + 1);
         log.setTransactionId(transactionId);
