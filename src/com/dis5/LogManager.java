@@ -50,6 +50,9 @@ public class LogManager {
     }
 
     public int getLastLogId() {
+        if (logs.size() == 0) {
+            return 0;
+        }
         return logs.get(logs.size() - 1).getId();
     }
 
@@ -88,6 +91,16 @@ public class LogManager {
             w.flush();
             w.close();
         } catch (IOException e) {
+
+            try {
+                Writer w = new FileWriter(LOG_FILE_PATH);
+                gson.toJson(logs, w);
+                w.flush();
+                w.close();
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
+
             e.printStackTrace();
         }
     }
