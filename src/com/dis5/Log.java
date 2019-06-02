@@ -1,11 +1,18 @@
 package com.dis5;
 
 public class Log {
+    public static int logId = 0;
+
     private int id;
     private int transactionId;
     private int pageId;
     private String data;
     private boolean redo;
+
+    public Log() {
+        this.id = logId;
+        logId++;
+    }
 
     public int getId() {
         return id;

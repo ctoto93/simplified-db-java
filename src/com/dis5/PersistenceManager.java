@@ -5,13 +5,15 @@ import com.google.gson.GsonBuilder;
 
 import java.io.*;
 import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Set;
 
 public class PersistenceManager {
     private static String PAGE_FOLDER_NAME = "pages";
     private static PersistenceManager instance;
     private static int lastTransactionId = 0;
 
-    private HashMap<Integer,Page> buffer = new HashMap<>();
+    private Hashtable<Integer,Page> buffer = new Hashtable<>();
     private LogManager logManager = new LogManager();
     private Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
@@ -31,14 +33,31 @@ public class PersistenceManager {
     }
 
     public void commit(int trasactionId) {
-        //TODO: persist the changes on disk
-        //TODO: update the buffer
-        //TODO: change the redo for that transaction id to false
+
+        if (!shouldProcessCommit()) {
+            return;
+        }
+
+        Log l = logManager.getLastLog(trasactionId);
+        Page p = buffer.get(l.getTransactionId());
+        persistPage(p);
+
+        for (Log log: logManager.getLogs(trasactionId)) {
+            log.setRedo(false);
+            logManager.updateLog(log);
+        }
+
     }
 
     public void write(int transactionId, int pageId, String data) {
-        //TODO: write the transaction id changes to logfile
+
+        Log log = new Log();
+        log.setTransactionId(transactionId);
+        log.setPageId(pageId);
+        log.setData(data);
+        logManager.appendLog(log);
     }
+
 
     public Page getPageById(int id) {
         if (buffer.containsKey(id)) {
@@ -48,6 +67,10 @@ public class PersistenceManager {
         Page p = getPageFromPersistence(id);
         buffer.put(id, p);
         return p;
+    }
+
+    private boolean shouldProcessCommit() {
+        return buffer.size() > 5;
     }
 
     private void persistPage(Page p) {
