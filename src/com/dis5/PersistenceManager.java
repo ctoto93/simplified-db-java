@@ -42,6 +42,8 @@ public class PersistenceManager {
 
         for (Log log: logManager.getLogs(transactionId)) {
             Page p = getPageById(log.getPageId());
+            p.setData(log.getData());
+            p.setLsnId(log.getId());
             persistPage(p);
             log.setRedo(false);
             logManager.updateLog(log);
